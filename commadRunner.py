@@ -1,7 +1,11 @@
 '''
 Require this command to executed as root before setting up this for brightness.
 echo 'SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"' | sudo tee -a /etc/udev/rules.d/backlight-permissions.rules
+
+Follow this to make this run as a service
+http://devopspy.com/linux/python-script-linux-systemd-service/
 '''
+import os
 import time
 import random
 import datetime
