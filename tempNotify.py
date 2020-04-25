@@ -11,19 +11,24 @@ def sendMessage(text):
     data = {"chat_id" : chatId, "text" : text}
     requests.get(url, params = data)
 
-def checkTemperature():
+def getTemperature():
     try:
         temp = str(subprocess.Popen("vcgencmd measure_temp", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell = True).communicate()[0])
         temp = float(temp.replace("b\"temp=", "").replace("'C\\n\"", ""))
-
-        if temp >= safeTemp:
-            text = "Temperature has crossed set thresold, current temperature on {} is {}".format(hostName,  temp)
-            sendMessage(text)
+        
+        return temp
     except Exception as e:
         text = "error occured on {}, error: {}".format(hostName,  str(e))
         sendMessage(text)
 
+def checkTemperature():
+    temp = getTemperature()
+    if temp >= safeTemp:
+        text = "Temperature has crossed set thresold, current temperature on {} is {}".format(hostName,  temp)
+        sendMessage(text)
+
+
 if __name__ == '__main__':
-    checkTemperature()
+    getTemperature()
 
 
