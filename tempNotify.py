@@ -1,11 +1,10 @@
 import requests
 import socket
 import subprocess
+from constants import chatId, botApi
 
 hostName = socket.gethostname()
 hostIp = socket.gethostbyname(hostName)
-chatId = "1155196460"
-botApi = "1018001497:AAG8ton3K3hZ9xaJkHHMRVpN6aRZVD_qp0A"
 url = "https://api.telegram.org/bot{}/sendMessage".format(botApi)
 safeTemp = 75.0
 flag = False
