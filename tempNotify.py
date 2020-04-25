@@ -4,30 +4,26 @@ import subprocess
 from constants import chatId, botApi
 
 hostName = socket.gethostname()
-hostIp = socket.gethostbyname(hostName)
 url = "https://api.telegram.org/bot{}/sendMessage".format(botApi)
 safeTemp = 75.0
-flag = False
 
-def send_message(text):
+def sendMessage(text):
     data = {"chat_id" : chatId, "text" : text}
     requests.get(url, params = data)
 
-def check_message():
+def checkTemperature():
     try:
-
         temp = str(subprocess.Popen("vcgencmd measure_temp", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell = True).communicate()[0])
         temp = float(temp.replace("b\"temp=", "").replace("'C\\n\"", ""))
 
         if temp >= safeTemp:
             text = "Temperature has crossed set thresold, current temperature on {} is {}".format(hostName,  temp)
-            send_message(text)
-
+            sendMessage(text)
     except Exception as e:
         text = "error occured on {}, error: {}".format(hostName,  str(e))
-        send_message(text)
+        sendMessage(text)
 
 if __name__ == '__main__':
-    check_message()
+    checkTemperature()
 
 
