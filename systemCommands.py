@@ -5,18 +5,29 @@ from datetime import datetime
 from rpi_backlight import Backlight
 
 def shutdown():
-    os.system('sudo shutdown now')
+    try:
+        os.system('sudo shutdown now')
+    except Exception as e:
+        raise Exception('Error shutting down')
 
 def restart():
-    os.system('sudo reboot now')
+    try:
+        os.system('sudo reboot now')
+    except Exception as e:
+        raise Exception('Error restarting down')
+
 
 def setBrightness(brightVal):
+    try:
     backlight = Backlight()
     if brightVal > 100:
         brightVal = 100
     elif brightVal < 0: 
         brightVal = 0
     backlight.brightness = brightVal
+    except Exception as e:
+        raise Exception('error setting brightness')
+
 
 def getImage():
     with picamera.PiCamera() as camera:

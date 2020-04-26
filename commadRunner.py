@@ -37,21 +37,15 @@ def handle(msg):
                         time.sleep(10)
                         restart()
                     elif command.startswith('brightness'):
-                        try:
                             brightVal = int(command.replace('brightness', '').strip())
                             setBrightness(brightVal)
                             bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
-                        except:
-                            bot.sendMessage(senderChatId, 'Error setting brightness')
                     elif command == 'picture':
-                        try:
                             fileName = getImage()
                             bot.sendPhoto(senderChatId, open(fileName, "rb"))
                             os.remove(fileName)
-                        except Exception as e:
-                            bot.sendMessage(senderChatId, 'Camera not connected')
                     else:
-                        bot.sendMessage(senderChatId, 'Invalid command, try systemName@command')
+                        bot.sendMessage(senderChatId, 'Invalid command')
                 except Exception as e:
                     bot.sendMessage(ownerownerChatId, 'Error occured: {}'.format(str(e)))
             else:
