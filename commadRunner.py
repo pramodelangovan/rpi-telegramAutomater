@@ -37,9 +37,12 @@ def handle(msg):
                         time.sleep(10)
                         restart()
                     elif command.startswith('brightness'):
-                        brightVal = int(command.replace('brightness', '').strip())
-                        setBrightness(brightVal)
-                        bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
+                        try:
+                            brightVal = int(command.replace('brightness', '').strip())
+                            setBrightness(brightVal)
+                            bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
+                        except:
+                            bot.sendMessage(senderChatId, 'Error setting brightness')
                     elif command == 'picture':
                         try:
                             fileName = getImage()
