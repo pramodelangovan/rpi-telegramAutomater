@@ -8,31 +8,33 @@ def shutdown():
     try:
         os.system('sudo shutdown now')
     except Exception as e:
-        raise Exception('Error shutting down')
+        raise Exception('Error shutting down: {}'.format(str(e)))
 
 def restart():
     try:
         os.system('sudo reboot now')
     except Exception as e:
-        raise Exception('Error restarting down')
+        raise Exception('Error restarting down: {}'.format(str(e)))
 
 
 def setBrightness(brightVal):
     try:
-    backlight = Backlight()
-    if brightVal > 100:
-        brightVal = 100
-    elif brightVal < 0: 
-        brightVal = 0
-    backlight.brightness = brightVal
+        backlight = Backlight()
+        if brightVal > 100:
+            brightVal = 100
+        elif brightVal < 0: 
+            brightVal = 0
+        backlight.brightness = brightVal
     except Exception as e:
-        raise Exception('error setting brightness')
+        raise Exception('Error setting brightness: {}'.format(str(e)))
 
 
 def getImage():
-    with picamera.PiCamera() as camera:
-        fileName = "{}.jpg".format(datetime.now().strftime("%b%d%Y%H%M%S"))
-        camera.vflip = True
-        camera.capture(fileName)
-        return fileName
-    
+    try:
+        with picamera.PiCamera() as camera:
+            fileName = "{}.jpg".format(datetime.now().strftime("%b%d%Y%H%M%S"))
+            camera.vflip = True
+            camera.capture(fileName)
+            return fileName
+    except Exception as e:
+        raise Exception('Error taking picture: {}'.format(str(e)))
