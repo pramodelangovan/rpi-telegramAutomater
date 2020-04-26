@@ -19,9 +19,9 @@ def setBrightness(brightVal):
     backlight.brightness = brightVal
 
 def getImage():
-    camera = picamera.PiCamera()
-    fileName = "{}.jpg".format(datetime.now().strftime("%b%d%Y%H%M%S"))
-    camera.vflip = True
-    camera.capture(fileName)
-    return fileName
+    with picamera.PiCamera() as camera:
+        fileName = "{}.jpg".format(datetime.now().strftime("%b%d%Y%H%M%S"))
+        camera.vflip = True
+        camera.capture(fileName)
+        return fileName
     

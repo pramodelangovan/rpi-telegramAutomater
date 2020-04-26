@@ -1,7 +1,7 @@
 import requests
 import socket
 import subprocess
-from constants import chatId, botApi
+from constants import ownerChatId, botApi
 
 hostName = socket.gethostname()
 url = "https://api.telegram.org/bot{}/sendMessage".format(botApi)
