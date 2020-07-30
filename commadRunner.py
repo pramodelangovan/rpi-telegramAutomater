@@ -33,6 +33,9 @@ def handle(msg):
                     bot.sendMessage(senderChatId, 'Initiating reboot')
                     time.sleep(10)
                     restart()
+                elif command == 'which bot':
+                    bot.sendMessage(senderChatId, systemName)
+                    time.sleep(10)
                 elif command.startswith('brightness'):
                        brightVal = int(command.replace('brightness', '').strip())
                        setBrightness(brightVal)
