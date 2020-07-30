@@ -18,6 +18,7 @@ Basic framework to build on telegram bot to automate
 
 #### Note:
 To Control brightness require this command to executed as root before setting up.
+
 ```echo 'SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"' | sudo tee -a /etc/udev/rules.d/backlight-permissions.rules```
 
 ## Run as Service
