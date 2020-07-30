@@ -32,6 +32,10 @@ def setBrightness(brightVal):
 def getImage():
     try:
         with picamera.PiCamera() as camera:
+            camera.rotation = 270
+            camera.resolution = (1920, 1080)
+            camera.brightness = 60
+            camera.ISO = 1500
             fileName = "{}.jpg".format(datetime.now().strftime("%b%d%Y%H%M%S"))
             camera.vflip = True
             camera.capture(fileName)
