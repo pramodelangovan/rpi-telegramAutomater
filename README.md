@@ -1,4 +1,4 @@
-# rpi-telegramAutomater
+# Telegram Automater
 Basic framework to build on telegram bot to automate
 
 1. To start clone this repo
@@ -9,10 +9,10 @@ Basic framework to build on telegram bot to automate
 3. Rename constants.sample.py to constants.py
 4. Edit the constants.py to add 
     
-    a. ownerChatId : Telegram User ID
+    `a. ownerChatId : Telegram User ID
     b. botApi : Telegram bot Api key
     c. systemName : name of your bot/machine
-    d. allowedChatId : add other telegram user id's to allow to send commands to telegram bot, (default : [ownerChatId])
+    d. allowedChatId : add other telegram user id's to allow to send commands to telegram bot, (default : [ownerChatId])`
     
 5. python3 <path to project>/commadRunner.py
 
