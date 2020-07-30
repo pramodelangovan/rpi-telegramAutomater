@@ -18,41 +18,38 @@ from systemCommands import shutdown, restart, setBrightness, getImage
 
 def handle(msg):
     senderChatId = msg['chat']['id']
-    fullCommand = msg['text'].lower().split('@')
+    command = msg['text'].lower()
 
-    if len(fullCommand) > 1:
-        system = fullCommand[0]
-        command = fullCommand[1]
-        if system == systemName:
-            if senderChatId in allowedChatId:
-                try:
-                    if command == 'temp':
-                        bot.sendMessage(senderChatId, 'Temperature is {}\'C'.format(getTemperature()))
-                    elif command == 'shutdown':
-                        bot.sendMessage(senderChatId, 'Initiating shutdown')
-                        time.sleep(10)
-                        shutdown()
-                    elif command == 'restart':
-                        bot.sendMessage(senderChatId, 'Initiating reboot')
-                        time.sleep(10)
-                        restart()
-                    elif command.startswith('brightness'):
-                            brightVal = int(command.replace('brightness', '').strip())
-                            setBrightness(brightVal)
-                            bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
-                    elif command == 'picture':
-                            fileName = getImage()
-                            bot.sendPhoto(senderChatId, open(fileName, "rb"))
-                            os.remove(fileName)
-                    else:
-                        bot.sendMessage(senderChatId, 'Invalid command')
-                except Exception as e:
-                    bot.sendMessage(ownerownerChatId, 'Error occured: {}'.format(str(e)))
-            else:
-                bot.sendMessage(senderChatId, 'You are not authorized to use this bot!')
-                bot.sendMessage(ownerChatId, 'Unauthorized message from {}'.format(str(msg)))
+    if len(command) > 1:
+        if senderChatId in allowedChatId:
+            try:
+                if command == 'temp':
+                    bot.sendMessage(senderChatId, 'Temperature is {}\'C'.format(getTemperature()))
+                elif command == 'shutdown':
+                    bot.sendMessage(senderChatId, 'Initiating shutdown')
+                    time.sleep(10)
+                    shutdown()
+                elif command == 'restart':
+                    bot.sendMessage(senderChatId, 'Initiating reboot')
+                    time.sleep(10)
+                    restart()
+                elif command.startswith('brightness'):
+                       brightVal = int(command.replace('brightness', '').strip())
+                       setBrightness(brightVal)
+                       bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
+                elif command == 'click':
+                       fileName = getImage()
+                       bot.sendPhoto(senderChatId, open(fileName, "rb"))
+                       os.remove(fileName)
+                else:
+                    bot.sendMessage(senderChatId, 'Invalid command')
+            except Exception as e:
+                bot.sendMessage(ownerChatId, 'Error occured: {}'.format(str(e)))
+        else:
+            bot.sendMessage(senderChatId, 'You are not authorized to use this bot!')
+            bot.sendMessage(ownerChatId, 'Unauthorized message from {}'.format(str(msg)))
     else:
-        bot.sendMessage(senderChatId, 'Invalid command, try systemName@command')
+        bot.sendMessage(senderChatId, 'Invalid command')
 
 bot = telepot.Bot(botApi)
 
