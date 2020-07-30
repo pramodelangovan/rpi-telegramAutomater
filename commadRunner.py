@@ -3,7 +3,25 @@ Require this command to executed as root before setting up this for brightness.
 echo 'SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"' | sudo tee -a /etc/udev/rules.d/backlight-permissions.rules
 
 Follow this to make this run as a service
-http://devopspy.com/linux/python-script-linux-systemd-service/
+$ sudo nano /lib/systemd/system/pytel.service
+
+Paste the following:
+    [Unit]
+    Description=telgram service at port 57777
+    After=multi-user.target
+
+    [Service]
+    Type=idle
+    ExecStart=/usr/bin/python3 /home/pi/piAutomater/commadRunner.py
+
+    [Install]
+    WantedBy=multi-user.target
+
+$ sudo chmod 644 /lib/systemd/system/pytel.service
+$ sudo systemctl daemon-reload
+$ sudo systemctl enable pytel.service
+$ sudo reboot now
+$ sudo systemctl status pytel.service
 '''
 import os
 import time
@@ -14,6 +32,7 @@ from telepot.loop import MessageLoop
 from constants import ownerChatId, botApi, systemName, allowedChatId
 from tempNotify import getTemperature
 from systemCommands import shutdown, restart, setBrightness, getImage
+from systemInfo import getSystemInfo
 
 
 def handle(msg):
@@ -35,6 +54,10 @@ def handle(msg):
                     restart()
                 elif command == 'which bot':
                     bot.sendMessage(senderChatId, systemName)
+                    time.sleep(10)
+                elif command == "stats":
+                    stats = getSystemInfo()
+                    bot.sendMessage(senderChatId, stats)
                     time.sleep(10)
                 elif command.startswith('brightness'):
                        brightVal = int(command.replace('brightness', '').strip())
