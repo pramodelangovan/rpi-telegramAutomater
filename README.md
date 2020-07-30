@@ -9,7 +9,8 @@ Basic framework to build on telegram bot to automate
     sudo pip3 install rpi-backlight==2.1.0
 3. Rename constants.sample.py to constants.py
 4. Edit the constants.py to add 
-    ```a. ownerChatId : Telegram User ID
+    ```
+    a. ownerChatId : Telegram User ID
     b. botApi : Telegram bot Api key
     c. systemName : name of your bot/machine
     d. allowedChatId : add other telegram user id's to allow to send commands to telegram bot, (default : [ownerChatId])```
