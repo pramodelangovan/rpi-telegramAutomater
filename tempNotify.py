@@ -1,21 +1,20 @@
 import requests
 import socket
 import subprocess
-from constants import ownerChatId, botApi
+from constants import ownerChatId, botApi, safeTemp
 
 hostName = socket.gethostname()
 url = "https://api.telegram.org/bot{}/sendMessage".format(botApi)
-safeTemp = 75.0
 
 def sendMessage(text):
-    data = {"chat_id" : chatId, "text" : text}
+    data = {"chat_id" : ownerChatId, "text" : text}
     requests.get(url, params = data)
 
 def getTemperature():
     try:
         temp = str(subprocess.Popen("vcgencmd measure_temp", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell = True).communicate()[0])
         temp = float(temp.replace("b\"temp=", "").replace("'C\\n\"", ""))
-        
+
         return temp
     except Exception as e:
         text = "error occured on {}, error: {}".format(hostName,  str(e))
@@ -29,6 +28,6 @@ def checkTemperature():
 
 
 if __name__ == '__main__':
-    getTemperature()
+    checkTemperature()
 
 
