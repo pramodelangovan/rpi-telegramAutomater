@@ -22,7 +22,7 @@ def setBrightness(brightVal):
         backlight = Backlight()
         if brightVal > 100:
             brightVal = 100
-        elif brightVal < 0: 
+        elif brightVal < 0:
             brightVal = 0
         backlight.brightness = brightVal
     except Exception as e:
