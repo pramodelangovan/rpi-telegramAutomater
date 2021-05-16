@@ -33,6 +33,7 @@ from constants import ownerChatId, botApi, systemName, allowedChatId
 from tempNotify import getTemperature
 from systemCommands import shutdown, restart, setBrightness, getImage
 from systemInfo import getSystemInfo
+from goldRate import getCurrentGoldRatesByCity
 
 
 def handle(msg):
@@ -67,6 +68,9 @@ def handle(msg):
                 #        fileName = getImage()
                 #        bot.sendPhoto(senderChatId, open(fileName, "rb"))
                 #        os.remove(fileName)
+                elif  command == 'gold':
+                    rates = getCurrentGoldRatesByCity()
+                    bot.sendMessage(senderChatId, rates)
                 else:
                     bot.sendMessage(senderChatId, 'Invalid command')
             except Exception as e:

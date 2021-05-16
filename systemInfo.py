@@ -52,12 +52,12 @@ def getSize(bytes, suffix="B"):
             return f"{bytes:.2f}{unit}{suffix}"
         bytes /= factor
 
-def getSystemInfo():	
+def getSystemInfo():
     uname = platform.uname()
     system =  uname.system
     hostName = uname.node
 
-    bootTimestamp = psutil.boot_time()    
+    bootTimestamp = psutil.boot_time()
     bootTime = datetime.fromtimestamp(bootTimestamp).replace(microsecond=0)
     now = datetime.now().replace(microsecond=0)
     upTime = str(now - bootTime)
@@ -105,7 +105,7 @@ def getSystemInfo():
         for address in interfaceAddresses:
             if str(address.family) == 'AddressFamily.AF_INET':
                 networkDetails += "Interface: {}, IP Address: {}\n".format(interfaceName, address.address)
-            
+
     netIO = psutil.net_io_counters()
     totalSent = getSize(netIO.bytes_sent)
     totalRecieved = getSize(netIO.bytes_recv)
