@@ -70,7 +70,7 @@ def handle(msg):
                 #        os.remove(fileName)
                 elif  command == 'gold':
                     rates = getCurrentGoldRatesByCity()
-                    bot.sendMessage(senderChatId, rates)
+                    bot.sendMessage(senderChatId, rates, parse_mode="HTML")
                 else:
                     bot.sendMessage(senderChatId, 'Invalid command')
             except Exception as e:
