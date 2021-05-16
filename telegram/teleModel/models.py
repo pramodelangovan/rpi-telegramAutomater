@@ -7,5 +7,7 @@ class goldRates(models.Model):
     oneGramRate = models.CharField(max_length=256)
     soverignRate = models.CharField(max_length=256)
     tenGramRate = models.CharField(max_length=256)
-    difference = models.CharField(max_length=256)
+    differencePerGram = models.CharField(max_length=256)
     state = models.CharField(max_length=256)
+    purity = models.CharField(max_length=256)
+    city = models.CharField(max_length=256)

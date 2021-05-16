@@ -1,12 +1,19 @@
-import setup
+import json
 import requests
+import setup
+import time
+
+from datetime import datetime
+from datetime import timedelta
+from tabulate import tabulate
+
 from bs4 import BeautifulSoup as bs
 from teleModel.models import goldRates
-import json
 
 
 
 CITIES = ["bangalore", "chennai"]
+CARAT = ["22", "24"]
 URL = "https://www.goodreturns.in/gold-rates/{}.html"
 HEADERS = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -22,86 +29,159 @@ HEADERS = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
 }
 
-def getDataFromWebiste():
+def getDataFromWebiste(typ="10"):
     data = {}
     for city in CITIES:
-        # url = URL.format(city)
-        # res = requests.get(url, headers=HEADERS)
-        # ############### Temp Code ##################
-        # with open("webpage.html", "w", encoding="utf-8") as resFile:
-        #     resFile.write(str(res.text))
-        # ############### Temp Code ##################
-        data[city] = getRates()
-    return data
+        url = URL.format(city)
+        res = requests.get(url, headers=HEADERS)
+
+        if res.status_code == 200:
+            if typ == "10":
+                data = getLastTenDaysRates(res.text)
+            if typ == "1":
+                data = getRatesForToday(res.text, city)
+
+            addGoldRatesToDB(data, city)
+            time.sleep(30)
+        else:
+            raise("error in request")
 
 def _cleanText(text):
     return text.replace("\n", "").replace("\t", "").replace("₹", "").replace(",", "").replace("  ", " ").strip()
 
-def _getRates(table):
-    return [[_cleanText(cell.text) for cell in row("td")] for row in table.find_all("tr")]
-
-def _getRates1(table):
+def _getRatesForTenDays(table):
     lst = []
     for row in table.find_all("tr")[1:]:
         rows = row("td")
         date = _cleanText(rows[0].text)
-        car22 = getClassified(rows[1])
-        car24 = getClassified(rows[2])
-        ret = {}
-        ret[date] = {}
-        ret[date].update({"22 Carat": {"tenGramRateYday": car22[0],"status": car22[2], "differnce": car22[1]}})
-        ret[date].update({"24 Carat": {"tenGramRateYday": car24[0],"status": car24[2], "differnce": car24[1]}})
-
-        lst.append(ret)
+        lst.extend([_getCategoryUpdate(date, "22", _getClassified(rows[1])), _getCategoryUpdate(date, "24", _getClassified(rows[2]))])
     return lst
 
+def _getCategoryUpdate(date, purity, carat, typ="10"):
+    if typ == "10":
+        tenGramRate = carat[0]
+        oneGramRate = carat[0]/10
+        soverignRate = (carat[0]/10)*8
+    elif typ == "1":
+        tenGramRate = carat[0]*10
+        oneGramRate = carat[0]
+        soverignRate = carat[0]*8
+    return {"date": date,
+            "purity": purity,
+            "tenGramRate": tenGramRate,
+            "oneGramRate": oneGramRate,
+            "soverignRate": soverignRate,
+            "state": carat[2],
+            "differnce": carat[1]}
 
-
-def getClassified(row):
+def _getClassified(row):
     status = None
     cell = str(row)
     text = _cleanText(row.text)
+    status = _getStatus(cell)
+
+    data = text.replace(")", "").replace("-","").strip().split("(")
+    return int(data[0].strip()), int(data[1].strip())/10, status
+
+def _getStatus(cell):
+    status = "noc"
     if "gain" in str(cell):
         status = "inc"
     elif "lose" in str(cell):
         status = "dec"
     elif "nochange" in str(cell):
         status = "noc"
-
-    data = text.replace(")", "").strip().split("(")
-    return data[0].strip(), data[1].strip(), status
-
-def _additionalData(data):
-    oneGramRateYday = data["yesterday"]
-    soverignRateYday = oneGramRateYday * 8
-    tenGramRateYday = oneGramRateYday * 10
-    oneGramRateTday = data["Today"]
-    soverignRateTday = oneGramRateYday * 8
-    tenGramRateTday = oneGramRateYday * 10
-    data["yesterday"] = {}
-
-def getRates(restext=None):
-    ############### Temp Code ##################
-    restext = ""
-    with open("webpage.html", "r", encoding="utf-8") as resFile:
-        restext = resFile.read()
-    ############### Temp Code ##################
-    soup = bs(restext, 'html5lib')
-    tables = soup.find_all("div", {"class": "gold_silver_table"})
-    yesterdayRate, TodayRate = _getRates(tables[0])[1][1:-1]
-    return {"yesterday": int(yesterdayRate), "Today": int(TodayRate)}
+    return status
 
 def getLastTenDaysRates(restext=None):
-    ############### Temp Code ##################
-    restext = ""
-    with open("webpage.html", "r", encoding="utf-8") as resFile:
-        restext = resFile.read()
-    ############### Temp Code ##################
     soup = bs(restext, 'html5lib')
     tables = soup.find_all("div", {"class": "gold_silver_table_10_days"})
-    return _getRates1(tables[0])
+    return _getRatesForTenDays(tables[0])
 
+def getDateInFormat():
+    today = datetime.now()
+    yday = today - timedelta(days=1)
+    dayBefore = today - timedelta(days=2)
+    return today.strftime("%b %d %Y"), yday.strftime("%b %d %Y"), dayBefore.strftime("%b %d %Y")
 
-if __name__ == "__main__":
-    print(json.dumps(getLastTenDaysRates(), indent=4))
-    # print(getDataFromWebiste())
+def _getRates(table, purity, city):
+    lst = []
+    tday, yday, dbday = getDateInFormat()
+    row = table.find_all("tr")[1:]
+    gramRow = row[0]('td')
+
+    tdayData = getTodayData(gramRow)
+    ydayData = getYdayData(gramRow, yday, dbday, purity, city)
+
+    lst.extend([_getCategoryUpdate(tday, purity, tdayData, typ="1"), _getCategoryUpdate(yday, purity, ydayData, typ="1")])
+    return lst
+
+def getYdayData(gramRow, yday, dbday, purity, city):
+    rate = int(_cleanText(gramRow[2].text))
+    if not goldRates.objects.filter(date=dbday, purity=purity, city=city).exists():
+        diff = 0; status = "noc"
+    else:
+        dbRates = goldRates.objects.get(date=dbday, purity=purity, city=city)
+        diff = yday - dbRates.oneGramRate
+        status = 'dec' if diff < 1 else 'inc' if diff > 1 else 'noc'
+    return int(rate), int(diff), status
+
+def getTodayData(gramRow):
+    rate = int(_cleanText(gramRow[1].text))
+    diff = int(_cleanText(gramRow[3].text))
+    status = _cleanText(_getStatus(gramRow[3]))
+    return rate, diff, status
+
+def getRatesForToday(restext, city):
+    lst = []
+    soup = bs(restext, 'html5lib')
+    tables = soup.find_all("div", {"class": "gold_silver_table"})
+    lst+= _getRates(tables[0], "22", city) + _getRates(tables[1], "24", city)
+    return lst
+
+def addGoldRatesToDB(rateList, city):
+    for rate in rateList:
+        rateObj = goldRates()
+        rateObj.date = rate["date"]
+        rateObj.oneGramRate = rate["oneGramRate"]
+        rateObj.soverignRate = rate["soverignRate"]
+        rateObj.tenGramRate = rate["tenGramRate"]
+        rateObj.differencePerGram = rate["differnce"]
+        rateObj.state = rate["state"]
+        rateObj.purity = rate["purity"]
+        rateObj.city = city
+        if not goldRates.objects.filter(date=rateObj.date,
+                                        purity=rateObj.purity,
+                                        city=rateObj.city).exists():
+            rateObj.save()
+
+def getCurrentGoldRatesByCity():
+    data = {}
+    ret = ""
+    for city in CITIES:
+        for purity in CARAT:
+            marker = "{}: {} Carat".format(city, purity)
+            data[marker] = getCurrentGoldRates(city, purity)
+
+    for key, value in data.items():
+        ret += "{}\n{}\n\n".format(key.capitalize(), value)
+
+    return ret
+
+def getCurrentGoldRates(city, purity):
+    lst = []
+    dates = list(getDateInFormat())
+    dates.sort(reverse=True)
+
+    for date in dates:
+        lst.append(makeRowItems(date, city, purity))
+    return tabulate(lst, headers=["Date", "1gm", "8gm", "Change/1g"], tablefmt='psql')
+
+def makeRowItems(date, city, purity):
+    rate = goldRates.objects.filter(date=date, city=city, purity=purity).first()
+    if rate:
+        changeMessage = "{}  ₹{}".format(statusMessage(rate.state), rate.differencePerGram)
+        return [rate.date, "₹{}".format(float(rate.oneGramRate)), "₹{}".format(float(rate.soverignRate)), changeMessage]
+
+def statusMessage(status):
+    return '⬇️' if status == "dec" else '⬆️' if status == "inc" else '❎'

@@ -33,6 +33,7 @@ from constants import ownerChatId, botApi, systemName, allowedChatId
 from tempNotify import getTemperature
 from systemCommands import shutdown, restart, setBrightness, getImage
 from systemInfo import getSystemInfo
+from goldRate import getCurrentGoldRatesByCity
 
 
 def handle(msg):
@@ -60,13 +61,16 @@ def handle(msg):
                     bot.sendMessage(senderChatId, stats)
                     time.sleep(10)
                 elif command.startswith('brightness'):
-                       brightVal = int(command.replace('brightness', '').strip())
-                       setBrightness(brightVal)
-                       bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
+                    brightVal = int(command.replace('brightness', '').strip())
+                    setBrightness(brightVal)
+                    bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
                 elif command == 'click':
-                       fileName = getImage()
-                       bot.sendPhoto(senderChatId, open(fileName, "rb"))
-                       os.remove(fileName)
+                    fileName = getImage()
+                    bot.sendPhoto(senderChatId, open(fileName, "rb"))
+                    os.remove(fileName)
+                elif  command == 'gold':
+                    rates = getCurrentGoldRatesByCity()
+                    bot.sendMessage(senderChatId, rates)
                 else:
                     bot.sendMessage(senderChatId, 'Invalid command')
             except Exception as e:
