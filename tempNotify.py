@@ -1,14 +1,8 @@
 import requests
 import socket
 import subprocess
-from constants import ownerChatId, botApi, safeTemp
-
-hostName = socket.gethostname()
-url = "https://api.telegram.org/bot{}/sendMessage".format(botApi)
-
-def sendMessage(text):
-    data = {"chat_id" : ownerChatId, "text" : text}
-    requests.get(url, params = data)
+from constants import safeTemp
+from utils import alertOwner
 
 def getTemperature():
     try:
@@ -18,13 +12,13 @@ def getTemperature():
         return temp
     except Exception as e:
         text = "error occured on {}, error: {}".format(hostName,  str(e))
-        sendMessage(text)
+        alertOwner(text)
 
 def checkTemperature():
     temp = getTemperature()
     if temp >= safeTemp:
         text = "Temperature has crossed set thresold, current temperature on {} is {}".format(hostName,  temp)
-        sendMessage(text)
+        alertOwner(text)
 
 
 if __name__ == '__main__':

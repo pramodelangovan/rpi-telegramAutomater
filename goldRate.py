@@ -7,6 +7,7 @@ from datetime import datetime
 from datetime import timedelta
 from tabulate import tabulate
 
+from utils import alertOwner
 from bs4 import BeautifulSoup as bs
 from teleModel.models import goldRates
 
@@ -175,14 +176,21 @@ def getCurrentGoldRates(city, purity):
 
     for date in dates:
         lst.append(makeRowItems(date, city, purity))
-    return tabulate(lst, headers=["Date", "1gm", "8gm", "Change/1g"], tablefmt='plain', numalign="right")
+    return tabulate(lst, headers=["Date", "1 gram", "Change/1gm", "8gram"], tablefmt='plain')
 
 def makeRowItems(date, city, purity):
     rate = goldRates.objects.filter(date=date, city=city, purity=purity).first()
     if rate:
         changeMessage = "{}  ₹{}".format(statusMessage(rate.state), rate.differencePerGram)
         dateStr = datetime.strptime(rate.date, "%b %d %Y").strftime("%d.%m.%y")
-        return [dateStr, "₹{}".format(float(rate.oneGramRate)), "₹{}".format(float(rate.soverignRate)), changeMessage]
+        return [dateStr, "₹{}".format(float(rate.oneGramRate)), changeMessage, "₹{}".format(float(rate.soverignRate))]
 
 def statusMessage(status):
-    return '⬇️' if status == "dec" else '⬆️' if status == "inc" else '❎'
+    return "⬇️" if status == "dec" else "⬆️" if status == "inc" else "❎"
+
+if __name__ == "__main__":
+    try:
+        getDataFromWebiste("10")
+        alertOwner("Gold details obtained successfully")
+    except Exception as e:
+        alertOwner("Error occured in fetching results: {}".format(str(e)))
