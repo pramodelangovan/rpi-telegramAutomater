@@ -61,16 +61,16 @@ def handle(msg):
                     bot.sendMessage(senderChatId, stats)
                     time.sleep(10)
                 elif command.startswith('brightness'):
-                    brightVal = int(command.replace('brightness', '').strip())
-                    setBrightness(brightVal)
-                    bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
+                       brightVal = int(command.replace('brightness', '').strip())
+                       setBrightness(brightVal)
+                       bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
                 elif command == 'click':
-                    fileName = getImage()
-                    bot.sendPhoto(senderChatId, open(fileName, "rb"))
-                    os.remove(fileName)
+                       fileName = getImage()
+                       bot.sendPhoto(senderChatId, open(fileName, "rb"))
+                       os.remove(fileName)
                 elif  command == 'gold':
                     rates = getCurrentGoldRatesByCity()
-                    bot.sendMessage(senderChatId, rates)
+                    bot.sendMessage(senderChatId, rates, parse_mode="HTML")
                 else:
                     bot.sendMessage(senderChatId, 'Invalid command')
             except Exception as e:
