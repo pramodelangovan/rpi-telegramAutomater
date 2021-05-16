@@ -60,14 +60,14 @@ def handle(msg):
                     stats = getSystemInfo()
                     bot.sendMessage(senderChatId, stats)
                     time.sleep(10)
-                elif command.startswith('brightness'):
-                       brightVal = int(command.replace('brightness', '').strip())
-                       setBrightness(brightVal)
-                       bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
-                elif command == 'click':
-                       fileName = getImage()
-                       bot.sendPhoto(senderChatId, open(fileName, "rb"))
-                       os.remove(fileName)
+                # elif command.startswith('brightness'):
+                #        brightVal = int(command.replace('brightness', '').strip())
+                #        setBrightness(brightVal)
+                #        bot.sendMessage(senderChatId, 'Brightness set to {}%'.format(brightVal))
+                # elif command == 'click':
+                #        fileName = getImage()
+                #        bot.sendPhoto(senderChatId, open(fileName, "rb"))
+                #        os.remove(fileName)
                 elif  command == 'gold':
                     rates = getCurrentGoldRatesByCity()
                     bot.sendMessage(senderChatId, rates, parse_mode="HTML")
