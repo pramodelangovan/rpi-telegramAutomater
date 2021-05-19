@@ -1,5 +1,6 @@
 constants.py
 __pycache__
 __pycache__/*
-**/*.sqlite3
-**/*.sql
+telegram/telegram/db.sqlite3
+*/*.sql
+migrations/*

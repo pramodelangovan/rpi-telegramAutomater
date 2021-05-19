@@ -11,3 +11,11 @@ class goldRates(models.Model):
     state = models.CharField(max_length=256)
     purity = models.CharField(max_length=256)
     city = models.CharField(max_length=256)
+
+class users(models.Model):
+    id = models.AutoField(primary_key=True)
+    userId = models.CharField(max_length=512)
+    name = models.CharField(max_length=512, default="")
+    isAdmin = models.BooleanField(default=False)
+    addedBy = models.CharField(max_length=512)
+    addedOn = models.DateTimeField(auto_now_add=True)

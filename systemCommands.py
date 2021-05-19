@@ -1,21 +1,12 @@
 import picamera
 import os
-from datetime import datetime
+import time
 
+from datetime import datetime
 from rpi_backlight import Backlight
 
-def shutdown():
-    try:
-        os.system('sudo shutdown now')
-    except Exception as e:
-        raise Exception('Error shutting down: {}'.format(str(e)))
-
-def restart():
-    try:
-        os.system('sudo reboot now')
-    except Exception as e:
-        raise Exception('Error restarting down: {}'.format(str(e)))
-
+from userUtils import isAdmin
+from utils import executeCommand, sendMessage
 
 def setBrightness(brightVal):
     try:
@@ -42,3 +33,29 @@ def getImage():
             return fileName
     except Exception as e:
         raise Exception('Error taking picture: {}'.format(str(e)))
+
+def commandExecutor(senderChatId, cmd):
+    if isAdmin(senderChatId):
+        if cmd == "restart transmission":
+            command = "sudo service transmission-daemon restart"
+            res = "Tramsmission restarted successfully"
+        elif cmd == "restart goldstats":
+            command = "sudo service goldstats restart"
+            res = "Gold rate service restarted successfully"
+        elif cmd == "shutdown":
+            command = "sudo shutdown now"
+            sendMessage(senderChatId, 'Initiating shutdown')
+            time.sleep(10)
+            os.system(command)
+        elif cmd == "reboot":
+            command = "sudo reboot now"
+            sendMessage(senderChatId, 'Initiating shutdown')
+            time.sleep(10)
+            os.system(command)
+
+        if command:
+            return "{}, {}".format(executeCommand(command), res)
+        else:
+            return "Invalid Command!"
+    else:
+        sendMessage(senderChatId, "You are not authorized to use this Command!, send \"add admin\" to request admin access")
