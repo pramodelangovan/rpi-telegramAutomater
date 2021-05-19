@@ -10,4 +10,6 @@ SELECT id,
     city
 FROM teleModel_goldrates;
 
+-- select * from teleModel_users;
+
 -- delete from teleModel_goldrates;

@@ -3,6 +3,9 @@ import socket
 import subprocess
 from constants import safeTemp
 from utils import alertOwner
+import socket
+
+hostName = socket.gethostname()
 
 def getTemperature():
     try:
