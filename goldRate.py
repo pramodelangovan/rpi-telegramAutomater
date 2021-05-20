@@ -165,7 +165,7 @@ def getCurrentGoldRatesByCity():
             data[marker] = getCurrentGoldRates(city, purity)
 
     for key, value in data.items():
-        ret += "<pre>{}</pre>\n<pre>{}</pre>\n\n".format(key.capitalize(), value)
+        ret += "{}\n{}\n\n".format(key.capitalize(), value)
 
     return ret
 

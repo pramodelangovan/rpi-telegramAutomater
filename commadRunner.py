@@ -97,7 +97,7 @@ def commandHandler(msg):
 
                     elif  command == 'gold':
                         rates = getCurrentGoldRatesByCity()
-                        sendMessage(senderChatId, rates, parse_mode="HTML")
+                        sendMessage(senderChatId, rates)
 
                     elif command.startswith("add user"):
                         data = command.replace("add user", "")
