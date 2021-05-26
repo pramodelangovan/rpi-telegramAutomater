@@ -49,7 +49,7 @@ def commandExecutor(senderChatId, cmd):
             os.system(command)
         elif cmd == "reboot":
             command = "sudo reboot now"
-            sendMessage(senderChatId, 'Initiating shutdown')
+            sendMessage(senderChatId, 'Initiating reboot')
             time.sleep(10)
             os.system(command)
 

@@ -37,6 +37,7 @@ from userUtils import AddUsers, addAdmin, getUsers, isAdmin
 from transmissionUtils import addMagnetUrl, addTorrentFile, getAllTorrents, startTorrent, stopTorrent
 
 def handle(msg):
+    # sendMessage(msg['chat']['id'], msg)
     if 'text' in msg:
         commandHandler(msg)
     elif 'document' in msg:
@@ -55,7 +56,7 @@ def documentHandler(msg):
             res = addTorrentFile(path)
             sendMessage(senderChatId, res)
     except Exception as e:
-        sendMessage(senderChatId, 'Error occured: 1{}'.format(str(e)))
+        sendMessage(senderChatId, 'Error occured: {}'.format(str(e)))
 
 
 def commandHandler(msg):
