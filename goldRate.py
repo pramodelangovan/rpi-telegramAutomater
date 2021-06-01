@@ -12,7 +12,6 @@ from bs4 import BeautifulSoup as bs
 from teleModel.models import goldRates
 
 
-
 CITIES = ["bangalore", "chennai"]
 CARAT = ["22", "24"]
 URL = "https://www.goodreturns.in/gold-rates/{}.html"
@@ -103,7 +102,7 @@ def getDateInFormat():
     today = datetime.now()
     yday = today - timedelta(days=1)
     dayBefore = today - timedelta(days=2)
-    return today.strftime("%b %d %Y"), yday.strftime("%b %d %Y"), dayBefore.strftime("%b %d %Y")
+    return today.strftime("%b %-d %Y"), yday.strftime("%b %-d %Y"), dayBefore.strftime("%b %-d %Y")
 
 def _getRates(table, purity, city):
     lst = []
@@ -175,7 +174,10 @@ def getCurrentGoldRates(city, purity):
     dates.sort(reverse=True)
 
     for date in dates:
-        lst.append(makeRowItems(date, city, purity))
+        item = makeRowItems(date, city, purity)
+        if item:
+            lst.append(item)
+
     return tabulate(lst, headers=["Date", "1 gram", "Change/1gm", "8gram"], tablefmt='plain')
 
 def makeRowItems(date, city, purity):
@@ -189,8 +191,4 @@ def statusMessage(status):
     return "⬇️" if status == "dec" else "⬆️" if status == "inc" else "❎"
 
 if __name__ == "__main__":
-    try:
-        getDataFromWebiste("10")
-        alertOwner("Gold details obtained successfully")
-    except Exception as e:
-        alertOwner("Error occured in fetching results: {}".format(str(e)))
+    getCurrentGoldRatesByCity()
