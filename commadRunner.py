@@ -27,7 +27,7 @@ import os
 import time
 import telepot
 from telepot.loop import MessageLoop
-from constants import botApi, systemName, torrentMimeTypes
+from Common.constants import botApi, systemName, torrentMimeTypes
 from tempNotify import getTemperature
 from systemCommands import setBrightness, getImage, commandExecutor
 from systemInfo import getSystemInfo

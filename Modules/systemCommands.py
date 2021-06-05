@@ -36,25 +36,33 @@ def getImage():
 
 def commandExecutor(senderChatId, cmd):
     if isAdmin(senderChatId):
+
         if cmd == "restart transmission":
             command = "sudo service transmission-daemon restart"
             res = "Tramsmission restarted successfully"
+
         elif cmd == "restart goldstats":
             command = "sudo service goldstats restart"
             res = "Gold rate service restarted successfully"
+
         elif cmd == "shutdown":
             command = "sudo shutdown now"
             sendMessage(senderChatId, 'Initiating shutdown')
             time.sleep(10)
             os.system(command)
+
         elif cmd == "reboot":
             command = "sudo reboot now"
             sendMessage(senderChatId, 'Initiating reboot')
             time.sleep(10)
             os.system(command)
 
-        if command:
-            return "{}, {}".format(executeCommand(command), res)
+        elif cmd:
+            output, error = executeCommand(cmd)
+            msg = output
+            if error:
+                msg = error
+            return "{}, {}".format(msg, res)
         else:
             return "Invalid Command!"
     else:

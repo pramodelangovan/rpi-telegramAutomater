@@ -4,9 +4,9 @@ import setup
 import time
 import subprocess
 import telepot
-from constants import ownerChatId, ownerName
-from constants import botApi, doumentDownloadUrl
-from userUtils import getAdmins
+from Common.constants import ownerChatId, ownerName
+from Common.constants import botApi, doumentDownloadUrl
+from Modules.userUtils import getAdmins
 
 from teleModel.models import users
 
@@ -25,18 +25,15 @@ def timedeltaToReadable(td):
     return "{} days, {} hours, {} minutes".format(td.days, td.seconds//3600, (td.seconds//60)%60)
 
 def executeCommand(command, sendOut=False):
-    errors = ""
+    error = ""
+    output = ""
     try:
         excutedCmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, errors = excutedCmd.communicate()
-        if errors:
-            return "Error Occured with command execution, error: {}".format(str(errors))
-        else:
-            retStr = "Command executed successfully!"
-            if sendOut:
-                retStr += "\n{}".format(output)
+        output, error = excutedCmd.communicate()
     except Exception as e:
-        return "Error Occured while execution, error: {}".format(str(errors))
+        error = "Error Occured while execution, error: {}".format(str(error))
+
+    return output, error
 
 def downloadFile(filepath, fileName):
     try:
