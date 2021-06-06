@@ -191,4 +191,10 @@ def statusMessage(status):
     return "⬇️" if status == "dec" else "⬆️" if status == "inc" else "❎"
 
 if __name__ == "__main__":
-    getCurrentGoldRatesByCity()
+    # Code for service, do not remove
+    try:
+        getDataFromWebiste("10")
+        alertOwner("Gold details obtained successfully")
+    except Exception as e:
+        alertOwner("Error occured in fetching results: {}".format(str(e)))
+
