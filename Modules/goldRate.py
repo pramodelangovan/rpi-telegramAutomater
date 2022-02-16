@@ -191,9 +191,17 @@ def statusMessage(status):
     return "⬇️" if status == "dec" else "⬆️" if status == "inc" else "❎"
 
 if __name__ == "__main__":
+<<<<<<< HEAD:Modules/goldRate.py
    # Code for service, do not remove
+=======
+    # Code for service, do not remove
+>>>>>>> master:goldRate.py
     try:
         getDataFromWebiste("10")
         alertOwner("Gold details obtained successfully")
     except Exception as e:
         alertOwner("Error occured in fetching results: {}".format(str(e)))
+<<<<<<< HEAD:Modules/goldRate.py
+=======
+
+>>>>>>> master:goldRate.py

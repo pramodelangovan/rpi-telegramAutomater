@@ -34,7 +34,7 @@ from systemInfo import getSystemInfo
 from goldRate import getCurrentGoldRatesByCity
 from utils import  addRequest, addedMessage, alertOwner, sendMessage, downloadFile, CreatesuperAdmin, upgradeRequest, upgradedMessage
 from userUtils import AddUsers, addAdmin, getUsers, isAdmin
-from transmissionUtils import addMagnetUrl, addTorrentFile, getAllTorrents, startTorrent, stopTorrent
+from transmissionUtils import addMagnetUrl, addTorrentFile, getAllTorrents, removeTorrent, restartAllTorrent, restartTorrent, startTorrent, stopTorrent
 
 def handle(msg):
     # sendMessage(msg['chat']['id'], msg)
@@ -135,6 +135,29 @@ def commandHandler(msg):
                     elif command.startswith("stop torrent"):
                         data = command.replace("stop torrent", "")
                         res = stopTorrent(data)
+                        sendMessage(senderChatId, res)
+
+                    elif command.startswith("remove torrent"):
+                        data = command.replace("remove torrent", "")
+                        res = removeTorrent(data)
+                        sendMessage(senderChatId, res)
+
+                    elif command.startswith("purge torrent"):
+                        data = command.replace("purge torrent", "")
+                        res = removeTorrent(data, deleteData=True)
+                        sendMessage(senderChatId, res)
+
+                    elif command.startswith("restart torrent"):
+                        data = command.replace("restart torrent", "")
+                        res = restartTorrent(data)
+                        sendMessage(senderChatId, res)
+
+                    elif command.startswith("restart all torrent"):
+                        res = restartAllTorrent()
+                        sendMessage(senderChatId, res)
+
+                    elif command.startswith("purge all torrent"):
+                        res = purgeAllTorrent()
                         sendMessage(senderChatId, res)
 
                     else:
